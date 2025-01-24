@@ -10,6 +10,12 @@ export const useAuthStore = defineStore('auth', {
     actions: {
         setUser(user: User | null) {
             this.user = user
+            console.log('user', user)
+            if (user) {
+                localStorage.setItem('user-roles', JSON.stringify(user.roles))
+            } else {
+                localStorage.removeItem('user-roles')
+            }
         },
 
         setToken(newToken: string | null) {
