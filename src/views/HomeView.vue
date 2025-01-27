@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import doctorSVG from '../assets/banner/doctor.svg'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 function handleGetStarted() {
     // Redirect to the login page
+    router.push('/dashboard')
 }
 </script>
 

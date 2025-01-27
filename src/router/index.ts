@@ -9,7 +9,7 @@ const routes = [
     { path: '/', name: 'home', component: HomeView },
     { path: '/login', name: 'login', component: LoginView, meta: { requiresGuest: true } },
     { path: '/register', name: 'register', component: RegisterView, meta: { requiresGuest: true } },
-    { path: '/dashboard', name: 'dashboard', component: Dashboard, meta: { requiresAuth: true, role: 'ROLE_PATIENT' }},
+    { path: '/dashboard', name: 'dashboard', component: Dashboard, meta: { requiresAuth: true, role: ['ROLE_PATIENT', 'ROLE_DOCTOR'] }},
 ];
 
 const router = createRouter({
@@ -21,11 +21,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const isAuthenticated = !!localStorage.getItem('user-token')
     const userRole = localStorage.getItem('user-roles')
-
-    console.log('to.meta.role', to.meta.role)
-    console.log('userRole', userRole)
-    console.log('erere', to.meta.role && userRole !== to.meta.role)
-
     // au cas l'utilisateur est déja connecter
     if (to.meta.requiresGuest && isAuthenticated) {
         next('/dashboard');
@@ -36,12 +31,16 @@ router.beforeEach((to, from, next) => {
         next('/login');
         return;
     }
-// Si la route a un rôle requis et que le rôle de l'utilisateur ne correspond pas
-    if (to.meta.role && !userRole.includes(to.meta.role)) {
+    // Si la route a un rôle requis et que le rôle de l'utilisateur ne correspond pas
+    if (to.meta.role && !hasRole(to.meta.role, userRole)) {
         next('/');
         return;
     }
     next()
 })
 
+
+function hasRole(toMetaRoles: string[], userRoles: string[]): boolean {
+    return toMetaRoles.some(role => userRoles.includes(role));
+}
 export default router

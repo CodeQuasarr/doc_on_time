@@ -7,8 +7,8 @@ import {authService} from "../../services/auth.service.ts";
 const router = useRouter()
 const authStore = useAuthStore()
 
-const email = ref('user1@example.com')
-const password = ref('password123')
+const email = ref('land@club-med.com')
+const password = ref('password')
 const error = ref('')
 const loading = ref(false)
 
@@ -22,12 +22,10 @@ async function handleSubmit() {
             password: password.value
         })
 
-
-        console.log(user)
         authStore.setToken(token)
         authStore.setUser(user)
 
-        router.push('/dashboard')
+        await router.push('/dashboard')
     } catch (e) {
         error.value = 'Email ou mot de passe incorrect'
     } finally {
