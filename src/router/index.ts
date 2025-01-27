@@ -3,6 +3,7 @@ import {createRouter, createWebHistory} from "vue-router";
 import LoginView from "../views/auth/LoginView.vue";
 import RegisterView from "../views/auth/RegisterView.vue";
 import Dashboard from "../views/Dashboard.vue";
+import AppointmentBooking from "../views/AppointmentBooking.vue";
 
 
 const routes = [
@@ -10,6 +11,9 @@ const routes = [
     { path: '/login', name: 'login', component: LoginView, meta: { requiresGuest: true } },
     { path: '/register', name: 'register', component: RegisterView, meta: { requiresGuest: true } },
     { path: '/dashboard', name: 'dashboard', component: Dashboard, meta: { requiresAuth: true, role: ['ROLE_PATIENT', 'ROLE_DOCTOR'] }},
+    {
+        path: '/booking', name: 'booking', component: AppointmentBooking, meta: { requiresAuth: true, role: ['ROLE_PATIENT'] }
+    }
 ];
 
 const router = createRouter({
