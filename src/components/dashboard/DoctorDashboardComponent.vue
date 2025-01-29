@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 
 import {onMounted, ref, watch} from "vue";
-import type {Appointment, Availability, PaginatedAvailability} from "../../types";
+import type {Appointment, Availability, PaginatedAppointment, PaginatedAvailability} from "../../types";
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import {format, isSameDay} from "date-fns";
@@ -10,7 +10,7 @@ import {doctorService} from "../../services/doctor.service.ts";
 import AppointmentOfDayComponent from "./AppointmentOfDayComponent.vue";
 import {VueAwesomePaginate} from "vue-awesome-paginate";
 
-const appointments = ref<Appointment[]>([])
+const appointments = ref<PaginatedAppointment>({})
 const selectedAppointment = ref<Appointment | null>(null)
 const consultationNotes = ref('')
 const availabilities = ref<PaginatedAvailability>({})
@@ -21,7 +21,8 @@ const newAvailability = ref<Availability>({
 const currentAvailabilityId = ref(0)
 const loading = ref(true)
 const error = ref('')
-const currentPage = ref<number>(1)
+const currentAvailabilityPage = ref<number>(1)
+const currentAppointmentPage = ref<number>(1)
 
 // Nouveau computed pour obtenir les créneaux existants pour la date sélectionnée
 const existingSlotsForSelectedDate = () => {
@@ -43,22 +44,23 @@ watch(() => newAvailability.value.date, existingSlotsForSelectedDate)
 
 onMounted(async () => {
     await Promise.all([
-        // loadAppointments(),
+        loadAppointments(),
         loadAvailabilities()
     ])
 })
 
-async function loadAppointments() {
+async function loadAppointments(page?: number = 1) {
     try {
-        appointments.value = await doctorService.getDoctorAppointments()
+        console.log('loadAppointments', page)
+        appointments.value = await doctorService.getDoctorAppointments(page)
     } catch (e) {
         error.value = 'Erreur lors du chargement des rendez-vous'
     }
 }
 
-async function loadAvailabilities() {
+async function loadAvailabilities(page?: number = currentAvailabilityPage.value) {
     try {
-        availabilities.value = await doctorService.getDoctorAvailabilities(new Date(), currentPage.value)
+        availabilities.value = await doctorService.getDoctorAvailabilities(new Date(), page)
     } catch (e) {
         error.value = 'Erreur lors du chargement des disponibilités'
     }
@@ -92,7 +94,7 @@ async function addAvailability() {
         }
 
         await doctorService.updateAvailabilities(newAvailability.value, currentAvailabilityId.value ?? null)
-        availabilities.value.push({...newAvailability.value})
+        availabilities.value.data.push({...newAvailability.value})
         newAvailability.value = {
             date: new Date(),
             slots: []
@@ -108,7 +110,7 @@ function formatDate(date: string) {
 }
 
 const onClickHandler = async (page: number) => {
-    loadAvailabilities(page, )
+    loadAvailabilities(page)
 };
 
 
@@ -118,10 +120,11 @@ const onClickHandler = async (page: number) => {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <!-- Rendez-vous du jour-->
-<!--            <AppointmentOfDayComponent-->
-<!--                :appointments="appointments"-->
-<!--                @open-consultation-notes="selectedAppointment = $event"-->
-<!--            />-->
+            <AppointmentOfDayComponent
+                :appointments="appointments"
+                @next-appointment="loadAppointments($event)"
+                @open-consultation-notes="selectedAppointment = $event"
+            />
             <!-- Gestion des disponibilités -->
             <div class="bg-[#f3f4f1] shadow rounded-lg p-6">
                 <h2 class="text-xl font-semibold mb-4">Gérer mes disponibilités</h2>
@@ -185,13 +188,13 @@ const onClickHandler = async (page: number) => {
                             </div>
                         </div>
                     </div>
-
                     <div class="mt-4 flex items-center justify-center p-2">
                         <vue-awesome-paginate
+                            v-if="availabilities.maxPage > 1"
                             :total-items="availabilities.total"
                             :items-per-page="availabilities.maxPage"
                             :max-pages-shown="5"
-                            v-model="currentPage"
+                            v-model="currentAvailabilityPage"
                             @click="onClickHandler"
 
                             backButtonClass="h-12 w-12 bg-[#39b52d] hover:bg-[#299020] text-white rounded-lg"

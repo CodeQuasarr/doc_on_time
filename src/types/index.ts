@@ -44,3 +44,10 @@ export interface PaginatedAvailability {
     maxPage: number;
     pageSize: number;
 }
+export interface PaginatedAppointment {
+    data: Appointment[];
+    total: number;
+    page: number;
+    maxPage: number;
+    pageSize: number;
+}

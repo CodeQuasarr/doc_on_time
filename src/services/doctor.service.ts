@@ -36,8 +36,10 @@ export const doctorService = {
         return data
     },
 
-    async getDoctorAppointments() {
-        const { data } = await api.get('/appointments')
+    async getDoctorAppointments(currentPage: number = 1) {
+        const { data } = await api.get('/appointments', {
+            params: {page:  currentPage}
+        })
         return data
     }
 }

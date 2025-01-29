@@ -1,14 +1,17 @@
 <script setup lang="ts">
 
-import type {Appointment} from "../../types";
+import type {Appointment, PaginatedAppointment} from "../../types";
 import {format} from "date-fns";
 import {fr} from "date-fns/locale";
+import {VueAwesomePaginate} from "vue-awesome-paginate";
+import {ref} from "vue";
 
 const props = defineProps<{
-    appointments: Appointment[]
+    appointments: PaginatedAppointment
 }>()
 
-const emit = defineEmits(['open-consultation-notes'])
+const currentPage = ref<number>(1)
+const emit = defineEmits(['open-consultation-notes', 'next-appointment'])
 
 function formatDate(date: string) {
     const timestamp: number = Date.parse(date);
@@ -19,35 +22,38 @@ function getDefaultAvatar(firstName: string, lastName: string) {
     return `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random`
 }
 
+function onClickHandler(page: number) {
+    emit('next-appointment', page)
+}
+
 </script>
 
 <template>
     <div class="bg-white shadow rounded-lg p-6">
         <h2 class="text-xl font-semibold mb-6">Rendez-vous du jour</h2>
-
-        <div v-if="appointments.length === 0" class="text-gray-500 text-center py-8">
+        <div v-if="appointments?.data?.length === 0" class="text-gray-500 text-center py-8">
             Aucun rendez-vous aujourd'hui
         </div>
 
         <div v-else class="space-y-6">
             <div
-                v-for="appointment in appointments"
+                v-for="appointment in appointments.data"
                 :key="appointment.id"
                 class="bg-white border border-gray-200 rounded-lg p-4 hover:border-primary-500 transition-colors duration-200"
             >
                 <div class="flex items-start space-x-4">
                     <img
-                        :src="getDefaultAvatar(appointment.patient_id.first_name, appointment.patient_id.last_name)"
-                        :alt="`Photo de ${appointment.patient_id.first_name}`"
+                        :src="getDefaultAvatar(appointment.patient.first_name, appointment.patient.last_name)"
+                        :alt="`Photo de ${appointment.patient.first_name}`"
                         class="w-16 h-16 rounded-full object-cover"
                     />
                     <div class="flex-1">
                         <div class="flex justify-between items-start">
                             <div>
                                 <h3 class="font-medium text-lg">
-                                    {{ appointment.patient_id.first_name }} {{ appointment.patient_id.last_name }}
+                                    {{ appointment.patient.first_name }} {{ appointment.patient.last_name }}
                                 </h3>
-                                <p class="text-gray-500">{{ appointment.patient_id.phone }}</p>
+                                <p class="text-gray-500">{{ appointment.patient.phone }}</p>
                             </div>
                             <span
                                 class="px-2 py-1 text-xs rounded-full"
@@ -96,6 +102,23 @@ function getDefaultAvatar(firstName: string, lastName: string) {
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="mt-4 flex items-center justify-center p-2">
+            <vue-awesome-paginate
+                v-if="appointments.maxPage > 1"
+                :total-items="appointments.total"
+                :items-per-page="appointments.maxPage"
+                :max-pages-shown="5"
+                v-model="currentPage"
+                @click="onClickHandler"
+
+                backButtonClass="h-12 w-12 bg-[#39b52d] hover:bg-[#299020] text-white rounded-lg"
+                nextButtonClass="h-12 w-12 bg-[#39b52d] hover:bg-[#299020] text-white rounded-lg"
+                activePageClass="h-12 w-12 bg-[#216e1d] hover:bg-[#299020] text-white rounded-lg"
+                numberButtonsClass="h-12 w-12 mx-2 hover:bg-[#299020] text-gray-900 px-3 py-2 rounded-lg"
+                firstButtonClass="h-12 w-12 mx-2 hover:bg-[#299020] px-3 py-2 rounded-lg"
+                lastButtonClass="h-12 w-12 mx-2 hover:bg-[#299020] px-3 py-2 rounded-lg"
+            />
         </div>
     </div>
 </template>
