@@ -36,3 +36,11 @@ export interface Availability {
     date: string
     slots: string[]
 }
+
+export interface PaginatedAvailability {
+    data: Availability[];
+    total: number;
+    page: number;
+    maxPage: number;
+    pageSize: number;
+}

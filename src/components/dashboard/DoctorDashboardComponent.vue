@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 
 import {onMounted, ref, watch} from "vue";
-import type {Appointment, Availability} from "../../types";
+import type {Appointment, Availability, PaginatedAvailability} from "../../types";
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import {format, isSameDay} from "date-fns";
@@ -12,7 +12,7 @@ import AppointmentOfDayComponent from "./AppointmentOfDayComponent.vue";
 const appointments = ref<Appointment[]>([])
 const selectedAppointment = ref<Appointment | null>(null)
 const consultationNotes = ref('')
-const availabilities = ref<Availability[]>([])
+const availabilities = ref<PaginatedAvailability>({})
 const newAvailability = ref<Availability>({
     date: new Date(),
     slots: []
@@ -23,13 +23,12 @@ const error = ref('')
 
 // Nouveau computed pour obtenir les créneaux existants pour la date sélectionnée
 const existingSlotsForSelectedDate = () => {
-    const existingAvailability = availabilities.value.find(a =>
+    const existingAvailability = availabilities.value.data.find(a =>
         isSameDay(new Date(a.date), new Date(newAvailability.value.date))
     )
     // ajouter a newAvailability les créneaux existants pour la date sélectionnée
     if (existingAvailability) {
         currentAvailabilityId.value = existingAvailability.id
-        console.log('existingAvailability', currentAvailabilityId.value)
         newAvailability.value.slots = existingAvailability.slots
     } else {
         newAvailability.value.slots = []
@@ -162,7 +161,7 @@ function formatDate(date: string) {
                     <h3 class="font-medium mb-2">Disponibilités actuelles</h3>
                     <div class="space-y-2">
                         <div
-                            v-for="(availability, index) in availabilities"
+                            v-for="(availability, index) in availabilities.data"
                             :key="index"
                             class="border border-[#39b52d] rounded p-2"
                         >

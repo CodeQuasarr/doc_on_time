@@ -1,5 +1,5 @@
 import api from './api'
-import type { Doctor, Availability } from '../types'
+import type {Doctor, Availability, PaginatedAvailability} from '../types'
 
 export const doctorService = {
     async getAllDoctors(filters?: { speciality?: string; location?: string }) {
@@ -8,7 +8,7 @@ export const doctorService = {
     },
 
     async getDoctorAvailabilities(doctorId: string, date: Date) {
-        const { data } = await api.get<Doctor['availabilities']>(`/availabilities`, {
+        const { data } = await api.get<PaginatedAvailability>(`/availabilities`, {
             params: { date: date.toISOString() }
         })
         return data
