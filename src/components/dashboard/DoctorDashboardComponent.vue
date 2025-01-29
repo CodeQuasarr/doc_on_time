@@ -8,6 +8,7 @@ import {format, isSameDay} from "date-fns";
 import {fr} from "date-fns/locale";
 import {doctorService} from "../../services/doctor.service.ts";
 import AppointmentOfDayComponent from "./AppointmentOfDayComponent.vue";
+import {VueAwesomePaginate} from "vue-awesome-paginate";
 
 const appointments = ref<Appointment[]>([])
 const selectedAppointment = ref<Appointment | null>(null)
@@ -20,6 +21,7 @@ const newAvailability = ref<Availability>({
 const currentAvailabilityId = ref(0)
 const loading = ref(true)
 const error = ref('')
+const currentPage = ref<number>(1)
 
 // Nouveau computed pour obtenir les créneaux existants pour la date sélectionnée
 const existingSlotsForSelectedDate = () => {
@@ -41,7 +43,7 @@ watch(() => newAvailability.value.date, existingSlotsForSelectedDate)
 
 onMounted(async () => {
     await Promise.all([
-        loadAppointments(),
+        // loadAppointments(),
         loadAvailabilities()
     ])
 })
@@ -56,7 +58,7 @@ async function loadAppointments() {
 
 async function loadAvailabilities() {
     try {
-        availabilities.value = await doctorService.getDoctorAvailabilities('current', new Date())
+        availabilities.value = await doctorService.getDoctorAvailabilities(new Date(), currentPage.value)
     } catch (e) {
         error.value = 'Erreur lors du chargement des disponibilités'
     }
@@ -100,11 +102,15 @@ async function addAvailability() {
     }
 }
 
-
 function formatDate(date: string) {
     const timestamp: number = Date.parse(date);
     return format(new Date(timestamp), 'PPP à HH:mm', {locale: fr})
 }
+
+const onClickHandler = async (page: number) => {
+    loadAvailabilities(page, )
+};
+
 
 </script>
 
@@ -112,10 +118,10 @@ function formatDate(date: string) {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <!-- Rendez-vous du jour-->
-            <AppointmentOfDayComponent
-                :appointments="appointments"
-                @open-consultation-notes="selectedAppointment = $event"
-            />
+<!--            <AppointmentOfDayComponent-->
+<!--                :appointments="appointments"-->
+<!--                @open-consultation-notes="selectedAppointment = $event"-->
+<!--            />-->
             <!-- Gestion des disponibilités -->
             <div class="bg-[#f3f4f1] shadow rounded-lg p-6">
                 <h2 class="text-xl font-semibold mb-4">Gérer mes disponibilités</h2>
@@ -159,7 +165,7 @@ function formatDate(date: string) {
 
                 <div class="mt-6">
                     <h3 class="font-medium mb-2">Disponibilités actuelles</h3>
-                    <div class="space-y-2">
+                    <div class="space-y-2 min-h-[300px]">
                         <div
                             v-for="(availability, index) in availabilities.data"
                             :key="index"
@@ -178,6 +184,23 @@ function formatDate(date: string) {
                                     </span>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="mt-4 flex items-center justify-center p-2">
+                        <vue-awesome-paginate
+                            :total-items="availabilities.total"
+                            :items-per-page="availabilities.maxPage"
+                            :max-pages-shown="5"
+                            v-model="currentPage"
+                            @click="onClickHandler"
+
+                            backButtonClass="h-12 w-12 bg-[#39b52d] hover:bg-[#299020] text-white rounded-lg"
+                            nextButtonClass="h-12 w-12 bg-[#39b52d] hover:bg-[#299020] text-white rounded-lg"
+                            activePageClass="h-12 w-12 bg-[#216e1d] hover:bg-[#299020] text-white rounded-lg"
+                            numberButtonsClass="h-12 w-12 mx-2 hover:bg-[#299020] text-gray-900 px-3 py-2 rounded-lg"
+                            firstButtonClass="h-12 w-12 mx-2 hover:bg-[#299020] px-3 py-2 rounded-lg"
+                            lastButtonClass="h-12 w-12 mx-2 hover:bg-[#299020] px-3 py-2 rounded-lg"
+                        />
                     </div>
                 </div>
             </div>

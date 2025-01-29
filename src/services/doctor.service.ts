@@ -7,9 +7,9 @@ export const doctorService = {
         return data
     },
 
-    async getDoctorAvailabilities(doctorId: string, date: Date) {
+    async getDoctorAvailabilities(date: Date, currentPage: number = 1) {
         const { data } = await api.get<PaginatedAvailability>(`/availabilities`, {
-            params: { date: date.toISOString() }
+            params: { date: date.toISOString(), page:  currentPage}
         })
         return data
     },
