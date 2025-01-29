@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import type {Appointment, Availability} from "../../types";
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import {format} from "date-fns";
+import {format, isSameDay} from "date-fns";
 import {fr} from "date-fns/locale";
 import {doctorService} from "../../services/doctor.service.ts";
 import AppointmentOfDayComponent from "./AppointmentOfDayComponent.vue";
@@ -17,8 +17,27 @@ const newAvailability = ref<Availability>({
     date: new Date(),
     slots: []
 })
+const currentAvailabilityId = ref(0)
 const loading = ref(true)
 const error = ref('')
+
+// Nouveau computed pour obtenir les créneaux existants pour la date sélectionnée
+const existingSlotsForSelectedDate = () => {
+    const existingAvailability = availabilities.value.find(a =>
+        isSameDay(new Date(a.date), new Date(newAvailability.value.date))
+    )
+    // ajouter a newAvailability les créneaux existants pour la date sélectionnée
+    if (existingAvailability) {
+        currentAvailabilityId.value = existingAvailability.id
+        console.log('existingAvailability', currentAvailabilityId.value)
+        newAvailability.value.slots = existingAvailability.slots
+    } else {
+        newAvailability.value.slots = []
+    }
+}
+
+// ecrir un watcher pour appeler existingSlotsForSelectedDate à chaque fois que la date change
+watch(() => newAvailability.value.date, existingSlotsForSelectedDate)
 
 onMounted(async () => {
     await Promise.all([
@@ -61,7 +80,17 @@ async function saveConsultationNotes() {
 
 async function addAvailability() {
     try {
-        await doctorService.updateAvailabilities([...availabilities.value, newAvailability.value])
+        console.log('newAvailability', newAvailability.value.slots.length, newAvailability.value.date)
+        if (!newAvailability.value.slots.length) {
+            error.value = 'Veuillez sélectionner au moins un créneau'
+            return
+        }
+        if (!newAvailability.value.date) {
+            error.value = 'Veuillez sélectionner une date'
+            return
+        }
+
+        await doctorService.updateAvailabilities(newAvailability.value, currentAvailabilityId.value ?? null)
         availabilities.value.push({...newAvailability.value})
         newAvailability.value = {
             date: new Date(),
@@ -109,9 +138,12 @@ function formatDate(date: string) {
                             <button
                                 v-for="hour in ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00']"
                                 :key="hour"
-                                @click="newAvailability.slots.includes(hour) ? newAvailability.slots = newAvailability.slots.filter(s => s !== hour) : newAvailability.slots.push(hour)"
+                                :class="{
+                                    'bg-[#299020] text-white': newAvailability.slots.includes(hour),
+                                    'bg-[#e6e7e0]': !newAvailability.slots.includes(hour)
+                                }"
                                 class="px-2 py-1 text-sm rounded"
-                                :class="{ 'bg-[#299020] text-white': newAvailability.slots.includes(hour), 'bg-[#e6e7e0]': !newAvailability.slots.includes(hour) }"
+                                @click="newAvailability.slots.includes(hour) ? newAvailability.slots = newAvailability.slots.filter(s => s !== hour) : newAvailability.slots.push(hour)"
                             >
                                 {{ hour }}
                             </button>
@@ -119,8 +151,8 @@ function formatDate(date: string) {
                     </div>
 
                     <button
-                        @click="addAvailability"
                         class="w-full bg-[#299020] text-white py-2 px-4 rounded-md hover:bg-[#216e1d]"
+                        @click="addAvailability"
                     >
                         Ajouter ces disponibilités
                     </button>
@@ -135,7 +167,7 @@ function formatDate(date: string) {
                             class="border border-[#39b52d] rounded p-2"
                         >
                             <p class="font-medium">
-                                {{ format(new Date(availability.date), 'PPP', { locale: fr }) }}
+                                {{ format(new Date(availability.date), 'PPP', {locale: fr}) }}
                             </p>
                             <div class="flex flex-wrap gap-1 mt-1">
                                     <span

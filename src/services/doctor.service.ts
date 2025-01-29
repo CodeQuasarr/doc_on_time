@@ -14,8 +14,17 @@ export const doctorService = {
         return data
     },
 
-    async updateAvailabilities(availabilities: Availability[]) {
-        const { data } = await api.post('/availabilities', { availabilities })
+    async updateAvailabilities(availabilities: Availability, availabilityId: number) {
+
+        const date = new Date(availabilities.date);
+
+// Extraire l'année, le mois et le jour
+        const formattedDate = date.toISOString().split('T')[0];
+
+        const { data } = await api.post(`/availabilities?id=${availabilityId}`, {
+            date: formattedDate,
+            slots: availabilities.slots
+        })
         return data
     },
 

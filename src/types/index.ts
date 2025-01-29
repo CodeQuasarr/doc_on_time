@@ -32,6 +32,7 @@ export interface Doctor {
 
 
 export interface Availability {
-    date: Date
+    id?: string
+    date: string
     slots: string[]
 }
