@@ -11,7 +11,7 @@ import PatientDashboardComponent from "../components/dashboard/PatientDashboardC
 <template>
     <div class="bg-[#f3f4f1]">
         <PatientDashboardComponent
-            v-if="authStore.user.roles.includes('ROLE_PATIENT')"
+            v-if="authStore.user?.roles.includes('ROLE_PATIENT')"
         />
         <DoctorDashboardComponent
             v-if="authStore.user && authStore.user.roles.includes('ROLE_DOCTOR')"

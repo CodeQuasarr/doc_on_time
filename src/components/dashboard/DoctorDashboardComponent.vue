@@ -10,27 +10,26 @@ import {doctorService} from "../../services/doctor.service.ts";
 import AppointmentOfDayComponent from "./AppointmentOfDayComponent.vue";
 import {VueAwesomePaginate} from "vue-awesome-paginate";
 
-const appointments = ref<PaginatedAppointment>({})
+const appointments = ref<PaginatedAppointment|null>(null)
 const selectedAppointment = ref<Appointment | null>(null)
 const consultationNotes = ref('')
-const availabilities = ref<PaginatedAvailability>({})
+const availabilities = ref<PaginatedAvailability|null>(null)
 const newAvailability = ref<Availability>({
-    date: new Date(),
+    date: new Date().toString(),
     slots: []
 })
 const currentAvailabilityId = ref(0)
-const loading = ref(true)
+// const loading = ref(true)
 const error = ref('')
 const currentAvailabilityPage = ref<number>(1)
-const currentAppointmentPage = ref<number>(1)
 
 // Nouveau computed pour obtenir les créneaux existants pour la date sélectionnée
 const existingSlotsForSelectedDate = () => {
-    const existingAvailability = availabilities.value.data.find(a =>
-        isSameDay(new Date(a.date), new Date(newAvailability.value.date))
+    const existingAvailability = availabilities?.value?.data.find(a =>
+        isSameDay(new Date(a.date), new Date(newAvailability?.value?.date))
     )
     // ajouter a newAvailability les créneaux existants pour la date sélectionnée
-    if (existingAvailability) {
+    if (existingAvailability && existingAvailability.id) {
         currentAvailabilityId.value = existingAvailability.id
         newAvailability.value.slots = existingAvailability.slots
     } else {
@@ -49,7 +48,7 @@ onMounted(async () => {
     ])
 })
 
-async function loadAppointments(page?: number = 1) {
+async function loadAppointments(page: number = 1) {
     try {
         console.log('loadAppointments', page)
         appointments.value = await doctorService.getDoctorAppointments(page)
@@ -58,7 +57,7 @@ async function loadAppointments(page?: number = 1) {
     }
 }
 
-async function loadAvailabilities(page?: number = currentAvailabilityPage.value) {
+async function loadAvailabilities(page: number = currentAvailabilityPage.value) {
     try {
         availabilities.value = await doctorService.getDoctorAvailabilities(new Date(), page)
     } catch (e) {
@@ -68,18 +67,18 @@ async function loadAvailabilities(page?: number = currentAvailabilityPage.value)
 
 
 async function saveConsultationNotes() {
-    if (!selectedAppointment.value) return
-
-    try {
-        await consultationService.addConsultationNotes(
-            selectedAppointment.value.id,
-            consultationNotes.value
-        )
-        selectedAppointment.value = null
-        consultationNotes.value = ''
-    } catch (e) {
-        error.value = 'Erreur lors de l\'enregistrement des notes'
-    }
+    // if (!selectedAppointment.value) return
+    //
+    // try {
+    //     await consultationService.addConsultationNotes(
+    //         selectedAppointment.value.id,
+    //         consultationNotes.value
+    //     )
+    //     selectedAppointment.value = null
+    //     consultationNotes.value = ''
+    // } catch (e) {
+    //     error.value = 'Erreur lors de l\'enregistrement des notes'
+    // }
 }
 
 async function addAvailability() {
@@ -94,9 +93,9 @@ async function addAvailability() {
         }
 
         await doctorService.updateAvailabilities(newAvailability.value, currentAvailabilityId.value ?? null)
-        availabilities.value.data.push({...newAvailability.value})
+        availabilities?.value?.data?.push({...newAvailability.value})
         newAvailability.value = {
-            date: new Date(),
+            date: new Date().toString(),
             slots: []
         }
     } catch (e) {
@@ -121,6 +120,7 @@ const onClickHandler = async (page: number) => {
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <!-- Rendez-vous du jour-->
             <AppointmentOfDayComponent
+                v-if="appointments"
                 :appointments="appointments"
                 @next-appointment="loadAppointments($event)"
                 @open-consultation-notes="selectedAppointment = $event"
@@ -168,7 +168,7 @@ const onClickHandler = async (page: number) => {
 
                 <div class="mt-6">
                     <h3 class="font-medium mb-2">Disponibilités actuelles</h3>
-                    <div class="space-y-2 min-h-[300px]">
+                    <div v-if="availabilities && availabilities.data.length" class="space-y-2 min-h-[300px]">
                         <div
                             v-for="(availability, index) in availabilities.data"
                             :key="index"
@@ -190,7 +190,7 @@ const onClickHandler = async (page: number) => {
                     </div>
                     <div class="mt-4 flex items-center justify-center p-2">
                         <vue-awesome-paginate
-                            v-if="availabilities.maxPage > 1"
+                            v-if="availabilities && availabilities.maxPage > 1"
                             :total-items="availabilities.total"
                             :items-per-page="availabilities.maxPage"
                             :max-pages-shown="5"

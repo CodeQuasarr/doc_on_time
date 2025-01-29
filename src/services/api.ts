@@ -1,5 +1,7 @@
 import axios from 'axios'
-import {useAuthStore} from "../stores/auth.ts";
+import {useRouter} from "vue-router";
+
+const router = useRouter()
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api'

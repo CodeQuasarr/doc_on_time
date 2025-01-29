@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import { doctorService } from '../services/doctor.service'
 import { appointmentService } from '../services/appointment.service'
 import { format } from 'date-fns'
-import { fr } from 'date-fns/locale'
+// import { fr } from 'date-fns/locale'
 import type { Doctor } from '../types'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -14,7 +14,7 @@ const loading = ref(false)
 const error = ref('')
 const doctors = ref<Doctor[]>([])
 const selectedDoctor = ref<Doctor | null>(null)
-const selectedDate = ref<Date | null>(null)
+const selectedDate = ref<string | null>(null)
 const selectedSlot = ref<string | null>(null)
 const specialityFilter = ref('')
 const locationFilter = ref('')
@@ -47,23 +47,23 @@ async function handleDoctorSelect(doctor: Doctor) {
     selectedSlot.value = null
 }
 
-async function handleDateSelect(date: Date) {
-    if (!selectedDoctor.value) return
-
-    try {
-        loading.value = true
-        const availabilities = await doctorService.getDoctorAvailabilities(selectedDoctor.value.id, date)
-        selectedDoctor.value = {
-            ...selectedDoctor.value,
-            availabilities: availabilities
-        }
-        selectedDate.value = date
-        selectedSlot.value = null
-    } catch (e) {
-        error.value = 'Erreur lors du chargement des disponibilités'
-    } finally {
-        loading.value = false
-    }
+async function handleDateSelect(_date: string) {
+    // if (!selectedDoctor.value) return
+    //
+    // try {
+    //     loading.value = true
+    //     const availabilities = await doctorService.getDoctorAvailabilities(selectedDoctor.value.id, date)
+    //     selectedDoctor.value = {
+    //         ...selectedDoctor.value,
+    //         availabilities: availabilities
+    //     }
+    //     selectedDate.value = date
+    //     selectedSlot.value = null
+    // } catch (e) {
+    //     error.value = 'Erreur lors du chargement des disponibilités'
+    // } finally {
+    //     loading.value = false
+    // }
 }
 
 async function handleBooking() {
@@ -138,7 +138,7 @@ loadDoctors()
                         :class="{ 'border-primary-500': selectedDoctor?.id === doctor.id }"
                         @click="handleDoctorSelect(doctor)"
                     >
-                        <h3 class="font-semibold">Dr. {{ doctor.lastName }}</h3>
+                        <h3 class="font-semibold">Dr. {{ doctor.last_name }}</h3>
                         <p class="text-sm text-gray-500">{{ doctor.speciality }}</p>
                         <p class="text-sm text-gray-500">{{ doctor.location }}</p>
                     </div>
@@ -149,7 +149,7 @@ loadDoctors()
                     <h3 class="text-lg font-semibold mb-4">Choisir une date</h3>
                     <VueDatePicker
                         v-model="selectedDate"
-                        :locale="fr"
+                        :locale="'fr'"
                         :min-date="new Date()"
                         @update:model-value="handleDateSelect"
                         class="mb-4"

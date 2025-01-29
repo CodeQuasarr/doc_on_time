@@ -18,7 +18,7 @@ async function handleSubmit() {
         error.value = ''
 
         const { user, token } = await authService.login({
-            email: email.value,
+            username: email.value,
             password: password.value
         })
 

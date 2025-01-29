@@ -4,21 +4,23 @@ export interface User {
     first_name: string
     last_name: string
     phone?: string
-    role: string[]
+    roles: string[]
 }
 
 // Disponibilité
 export interface Appointment {
     id: string
     doctorId: string
-    patient_id: {
+    patient: {
         first_name: string
         last_name: string
         phone: string
     }
     date: string
-    status: 'pending' | 'confirmed' | 'cancelled'
+    status: 'En attente' | 'Programmée'
     type: string
+    reason?: string
+    notes?: string
 }
 
 export interface Doctor {
@@ -32,7 +34,7 @@ export interface Doctor {
 
 
 export interface Availability {
-    id?: string
+    id?: number
     date: string
     slots: string[]
 }

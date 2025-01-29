@@ -4,8 +4,15 @@ import LoginView from "../views/auth/LoginView.vue";
 import RegisterView from "../views/auth/RegisterView.vue";
 import Dashboard from "../views/Dashboard.vue";
 import AppointmentBooking from "../views/AppointmentBooking.vue";
+import "vue-router";
 
-
+declare module "vue-router" {
+    interface RouteMeta {
+        requiresAuth?: boolean;
+        requiresGuest?: boolean;
+        role?: string[]; // Définit `role` comme un tableau de chaînes
+    }
+}
 const routes = [
     { path: '/', name: 'home', component: HomeView },
     { path: '/login', name: 'login', component: LoginView, meta: { requiresGuest: true } },
@@ -22,9 +29,9 @@ const router = createRouter({
 });
 
 // Navigation guard
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
     const isAuthenticated = !!localStorage.getItem('user-token')
-    const userRole = localStorage.getItem('user-roles')
+    const userRole = JSON.parse(localStorage.getItem('user-roles') || '[]');
     // au cas l'utilisateur est déja connecter
     if (to.meta.requiresGuest && isAuthenticated) {
         next('/dashboard');
@@ -37,6 +44,7 @@ router.beforeEach((to, from, next) => {
     }
     // Si la route a un rôle requis et que le rôle de l'utilisateur ne correspond pas
     if (to.meta.role && !hasRole(to.meta.role, userRole)) {
+
         next('/');
         return;
     }

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 
-import type {Appointment, PaginatedAppointment} from "../../types";
+import type {PaginatedAppointment} from "../../types";
 import {format} from "date-fns";
 import {fr} from "date-fns/locale";
 import {VueAwesomePaginate} from "vue-awesome-paginate";
 import {ref} from "vue";
 
-const props = defineProps<{
+defineProps<{
     appointments: PaginatedAppointment
 }>()
 
@@ -37,7 +37,7 @@ function onClickHandler(page: number) {
 
         <div v-else class="space-y-6">
             <div
-                v-for="appointment in appointments.data"
+                v-for="appointment in appointments?.data"
                 :key="appointment.id"
                 class="bg-white border border-gray-200 rounded-lg p-4 hover:border-primary-500 transition-colors duration-200"
             >
@@ -58,9 +58,8 @@ function onClickHandler(page: number) {
                             <span
                                 class="px-2 py-1 text-xs rounded-full"
                                 :class="{
-                                          'bg-green-100 text-green-800': appointment.status === 'confirmed',
-                                          'bg-yellow-100 text-yellow-800': appointment.status === 'pending',
-                                          'bg-red-100 text-red-800': appointment.status === 'cancelled'
+                                          'bg-green-100 text-green-800': appointment.status === 'Programmée',
+                                          'bg-red-100 text-red-800': appointment.status === 'En attente'
                                         }"
                             >
                     {{ appointment.status }}
@@ -105,7 +104,7 @@ function onClickHandler(page: number) {
         </div>
         <div class="mt-4 flex items-center justify-center p-2">
             <vue-awesome-paginate
-                v-if="appointments.maxPage > 1"
+                v-if="appointments && appointments.maxPage > 1"
                 :total-items="appointments.total"
                 :items-per-page="appointments.maxPage"
                 :max-pages-shown="5"

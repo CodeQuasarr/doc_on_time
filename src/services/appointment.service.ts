@@ -1,9 +1,9 @@
 import api from './api'
-import type { Appointment } from '../types'
+import type {Appointment, PaginatedAppointment} from '../types'
 
 export const appointmentService = {
     async getUserAppointments() {
-        const { data } = await api.get<Appointment[]>('/appointments')
+        const { data } = await api.get<PaginatedAppointment>('/appointments')
         return data
     },
 
