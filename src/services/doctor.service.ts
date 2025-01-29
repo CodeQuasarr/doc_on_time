@@ -18,10 +18,18 @@ export const doctorService = {
 
         const date = new Date(availabilities.date);
 
-// Extraire l'année, le mois et le jour
+        // Extraire l'année, le mois et le jour
         const formattedDate = date.toISOString().split('T')[0];
 
-        const { data } = await api.post(`/availabilities?id=${availabilityId}`, {
+        if (availabilityId === 0) {
+            const { data } = await api.post(`/availabilities`, {
+                date: formattedDate,
+                slots: availabilities.slots
+            })
+            return data
+        }
+
+        const { data } = await api.put(`/availabilities/${availabilityId}`, {
             date: formattedDate,
             slots: availabilities.slots
         })

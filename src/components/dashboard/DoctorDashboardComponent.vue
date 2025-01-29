@@ -33,6 +33,7 @@ const existingSlotsForSelectedDate = () => {
         newAvailability.value.slots = existingAvailability.slots
     } else {
         newAvailability.value.slots = []
+        currentAvailabilityId.value = 0
     }
 }
 
@@ -80,7 +81,6 @@ async function saveConsultationNotes() {
 
 async function addAvailability() {
     try {
-        console.log('newAvailability', newAvailability.value.slots.length, newAvailability.value.date)
         if (!newAvailability.value.slots.length) {
             error.value = 'Veuillez sélectionner au moins un créneau'
             return
