@@ -98,5 +98,10 @@ export const doctorService = {
             params: { date: formattedDate }
         })
         return data
+    },
+
+    async getWeeklyDateAndHourAppointments() {
+        const { data } = await api.get(`/appointments/week`)
+        return data
     }
 }

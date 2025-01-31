@@ -11,7 +11,7 @@ import { useRouter } from "vue-router";
  * @param {number} [warningDuration=30000] The duration (in milliseconds) prior to the timeout in which a warning will be shown.
  * @return {Object} An object containing the reactive state `showWarning`, which indicates whether the warning message should be displayed.
  */
-export function useInactivity(timeout: number = 10 * 60 * 1000, warningDuration: number = 30 * 1000) {
+export function useInactivity(timeout: number = 1 * 60 * 1000, warningDuration: number = 30 * 1000) {
     const router = useRouter();
     const timeoutRef = ref<ReturnType<typeof setTimeout> | null>(null);
     const warningRef = ref<ReturnType<typeof setTimeout> | null>(null);
@@ -77,7 +77,7 @@ export function useInactivity(timeout: number = 10 * 60 * 1000, warningDuration:
         console.log("Utilisateur déconnecté pour inactivité !");
         showWarning.value = false;
         localStorage.clear();
-        router.push({ name: "Home" });
+        router.push({ name: "home" });
     };
 
     /**

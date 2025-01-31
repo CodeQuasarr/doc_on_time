@@ -183,11 +183,19 @@ const formatDatex = (date: Date) => {
     });
 };
 
+const weeklyDateAndHourAppointments = ref([]);
+
+const loadWeeklyAppointmentsHoursAndDates = async () => {
+    weeklyDateAndHourAppointments.value = await doctorService.getWeeklyDateAndHourAppointments()
+    console.log('weeklyDateAndHourAppointments', weeklyDateAndHourAppointments.value)
+};
+
 // Gérer le clic sur un jour
 const handleDayClick = (day: string, date: Date) => {
     console.log('handleDayClick', day);
     selectedDay.value = `${day} ${formatDate(date)}`;
     showAddAvailability.value = true;
+    loadWeeklyAppointmentsHoursAndDates();
 };
 
 // Gérer l'édition d'un créneau horaire

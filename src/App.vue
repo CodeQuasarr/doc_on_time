@@ -2,7 +2,7 @@
 
 import {useInactivity} from "./composables/useInactivity.ts";
 
-const { showWarning } = useInactivity(10 * 60 * 1000, 30 * 1000);
+const { showWarning: resetTimer } = useInactivity(10 * 60 * 1000, 30 * 1000);
 
 /**
  * A function that resets a timer manually by performing the following actions:
