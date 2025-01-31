@@ -15,22 +15,27 @@ api.interceptors.request.use(config => {
     return config
 })
 
-// Intercepteur pour gérer les erreurs de réponse
+// Ajouter un intercepteur pour les réponses
 api.interceptors.response.use(
-    response => response,
-    error => {
-        // Si l'erreur est 401 (Unauthorized) ou 403 (Forbidden)
-        if (error.response && (error.response.status === 401)) {
-            localStorage.clear()
-            // On récupère le store d'authentification
-            console.error('error', error.response)
-            // On déconnecte l'utilisateur
-            // authStore.logout()
-            // On redirige vers la page de connexion
-            router.push('/login')
+    (response) => {
+        // Si la réponse est OK, on la retourne simplement
+        return response;
+    },
+    (error) => {
+        // Si une erreur arrive
+        if (error.response && error.response.status === 401) {
+            const router = useRouter();
+
+            // Supprimer tous les éléments stockés dans localStorage
+            localStorage.clear();
+
+            // Rediriger vers la page d'accueil
+            router.push({ name: "home" }); // Assurez-vous d'utiliser un nom de route valide
         }
-        return Promise.reject(error)
+
+        // Rejeter l'erreur pour laisser le flux d'erreur habituel gérer le reste
+        return Promise.reject(error);
     }
-)
+);
 
 export default api
