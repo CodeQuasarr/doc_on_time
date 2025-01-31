@@ -6,17 +6,18 @@ const authStore = useAuthStore()
 
 import DoctorDashboardComponent from "../components/dashboard/DoctorDashboardComponent.vue";
 import PatientDashboardComponent from "../components/dashboard/PatientDashboardComponent.vue";
+import AuthTemplate from "../layouts/AuthTemplate.vue";
 </script>
 
 <template>
-    <div class="bg-[#f3f4f1]">
+    <AuthTemplate>
         <PatientDashboardComponent
             v-if="authStore.user?.roles.includes('ROLE_PATIENT')"
         />
         <DoctorDashboardComponent
             v-if="authStore.user && authStore.user.roles.includes('ROLE_DOCTOR')"
         />
-    </div>
+    </AuthTemplate>
 </template>
 
 <style scoped>
