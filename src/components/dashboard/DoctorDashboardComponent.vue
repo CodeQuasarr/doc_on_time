@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 
 import {onMounted, ref} from "vue";
-import type {PaginatedAppointment, PaginatedAvailability} from "../../types";
+import type {PaginatedAppointment, Schedule} from "../../types";
 import {doctorService} from "../../services/doctor.service.ts";
 import AppointmentOfDayComponent from "./AppointmentOfDayComponent.vue";
 import TheAvailabilityList from "./TheAvailabilityList.vue";
@@ -15,9 +15,9 @@ const currentDayAppointments = ref<PaginatedAppointment|null>(null)
 const currentDayAppointmentHours = ref<string[]>([])
 
 // Disponibilités actuelles
-const currentAndNextDayAvailability = ref<PaginatedAvailability|null>(null)
-const weekAvailability = ref<PaginatedAvailability|null>(null)
-const weekAppointment = ref<PaginatedAvailability|null>(null)
+const currentAndNextDayAvailability = ref<Schedule[]|null>(null)
+const weekAvailability = ref<Schedule[]|null>(null)
+const weekAppointment = ref<Schedule[]|null>(null)
 
 
 const loadCurrentDayAppointments = async (page: number = 1) => {
@@ -80,6 +80,9 @@ onMounted(async () => {
                 @next-appointment="loadCurrentDayAppointments($event)"
             />
             <!-- Gérer mes disponibilités -->
+            <pre>
+                {{weekAppointment}}
+            </pre>
             <TheWeeklyCalendar
                 v-if="weekAvailability"
                 :week-availability="weekAvailability"
@@ -90,6 +93,7 @@ onMounted(async () => {
         <!-- droite -->
         <div class="space-y-6">
             <!-- Disponibilités actuelles -->
+            <pre>{{currentAndNextDayAvailability}}</pre>
             <TheAvailabilityList
                 :availabilities="currentAndNextDayAvailability"
                 :appointment-hours="currentDayAppointmentHours"

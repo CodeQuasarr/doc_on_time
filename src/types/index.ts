@@ -64,3 +64,9 @@ export interface DayInfo {
     full: string;
     date: Date;
 }
+
+export interface Schedule {
+    id?: number;
+    date: string;
+    slots: string[];
+}

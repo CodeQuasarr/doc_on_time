@@ -1,19 +1,31 @@
 <script setup lang="ts">
 
 import {XMarkIcon} from "@heroicons/vue/24/outline";
-import type {PaginatedAvailability} from "../../types";
+import type {Availability} from "../../types";
+import type {PropType} from "vue";
 
-defineProps<{
-    availabilities: PaginatedAvailability | null,
-    appointmentHours: string[]
-}>()
+
+const props = defineProps({
+    availabilities: {
+        type: [Object, null] as PropType<Availability[] | null>, // On permet à 'availabilities' d'être soit un objet de type PaginatedAvailability, soit null
+        required: false
+    },
+    appointmentHours: {
+        type: Array as PropType<string[]>, // Ou spécifie le type correct pour le tableau si ce n'est pas un tableau de chaînes
+        default: () => [],
+        required: false
+    }
+});
 
 const handleDeleteSlot = (time: string, day: 'today' | 'tomorrow') => {
-    if (day === 'today') {
-        availabilities[0].slots = availabilities[0].slots.filter(slot => slot !== time);
-    } else {
-        availabilities[1].slots = availabilities[1].slots.filter(slot => slot !== time);
+    if (props.availabilities && props.availabilities[0]) {
+        if (day === 'today') {
+            props.availabilities[0].slots = props.availabilities[0].slots.filter(slot => slot !== time);
+        } else {
+            props.availabilities[1].slots = props.availabilities[1].slots.filter(slot => slot !== time);
+        }
     }
+
 };
 
 
@@ -21,7 +33,10 @@ const handleDeleteSlot = (time: string, day: 'today' | 'tomorrow') => {
 
 <template>
     <div class="bg-white p-6 rounded-xl shadow-sm">
-        <h2 class="text-lg font-semibold text-[#3c3f35] mb-6">Disponibilités actuelles</h2>
+        <pre>
+            {{ props.availabilities }}
+        </pre>
+        <h2 class="text+9-lg font-semibold text-[#3c3f35] mb-6">Disponibilités actuelles</h2>
         <div class="space-y-4">
             <div class="p-3 rounded-lg bg-[#edfbea]">
                 <div class="flex items-center justify-between mb-2">
@@ -46,7 +61,7 @@ const handleDeleteSlot = (time: string, day: 'today' | 'tomorrow') => {
                         </div>
                         <div v-else class="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                             <button
-                                @click="handleDeleteSlot(time, 'tomorrow')"
+                                @click="handleDeleteSlot(slot, 'tomorrow')"
                                 class="p-1 rounded bg-[#f3f4f1] text-[#474c3f] hover:bg-[#e6e7e0]"
                             >
                                 <XMarkIcon class="w-3 h-3" />
@@ -77,7 +92,7 @@ const handleDeleteSlot = (time: string, day: 'today' | 'tomorrow') => {
                         </button>
                         <div class="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                             <button
-                                @click="handleDeleteSlot(time, 'today')"
+                                @click="handleDeleteSlot(slot, 'today')"
                                 class="p-1 rounded bg-[#f3f4f1] text-[#474c3f] hover:bg-[#e6e7e0]"
                             >
                                 <XMarkIcon class="w-3 h-3" />

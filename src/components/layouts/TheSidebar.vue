@@ -1,16 +1,12 @@
 <script lang="ts" setup>
 import {defineEmits, computed} from "vue";
 import {useRoute} from "vue-router";
-import {XMarkIcon, PencilIcon, UserIcon, CalendarIcon, UsersIcon, UserGroupIcon, HomeIcon} from '@heroicons/vue/24/outline'
+import {XMarkIcon, CalendarIcon} from '@heroicons/vue/24/outline'
 
 const props = defineProps<{
     isOpen: Boolean;
 }>();
 const emit = defineEmits(['update:isOpen']);
-const menuItems = [
-    { to: '/', icon: HomeIcon, text: 'Dashboard' },
-    // { to: '/products', icon: ArchiveBoxIcon, text: 'stocks' },
-]
 
 const routes = [
     { to: '/dashboard', icon: CalendarIcon, text: 'Rendez-vous' },

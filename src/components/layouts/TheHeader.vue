@@ -3,7 +3,6 @@
 import { defineEmits } from "vue";
 import NotificationsDropdown from "./NotificationsDropdown.vue";
 import UserDropdown from "./UserDropdown.vue";
-import {Mo, PencilIcon, XMarkIcon, CalendarIcon, UsersIcon, PlusIcon} from '@heroicons/vue/24/outline'
 
 const emit = defineEmits(["update:modelValue"]);
 

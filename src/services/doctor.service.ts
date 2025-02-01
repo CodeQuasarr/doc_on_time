@@ -1,5 +1,5 @@
 import api from './api'
-import type {Doctor, Availability, PaginatedAvailability} from '../types'
+import type {Doctor, Availability, PaginatedAvailability, Schedule} from '../types'
 
 /**
  * An object providing services and API calls for managing doctor data, availability, and appointments.
@@ -41,17 +41,17 @@ export const doctorService = {
     },
 
     async getDoctorCurrentAndNextDayAvailability() {
-        const { data } = await api.get<PaginatedAvailability>(`/next-two-days-availabilities`)
+        const { data } = await api.get<Schedule[]>(`/next-two-days-availabilities`)
         return data
     },
 
     async getDoctorWeekAvailability() {
-        const { data } = await api.get<PaginatedAvailability>(`/availabilities/week`)
+        const { data } = await api.get<Schedule[]>(`/availabilities/week`)
         return data
     },
 
     async getDoctorWeekAppointment() {
-        const { data } = await api.get<PaginatedAvailability>(`/appointments/week`)
+        const { data } = await api.get<Schedule[]>(`/appointments/week`)
         return data
     },
 

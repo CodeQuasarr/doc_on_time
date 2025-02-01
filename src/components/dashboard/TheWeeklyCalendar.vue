@@ -14,7 +14,7 @@ const props = defineProps({
 })
 
 import {CalendarIcon, ClockIcon, PlusIcon, XMarkIcon} from "@heroicons/vue/24/outline";
-import {computed, ref} from "vue";
+import {computed, type PropType, ref} from "vue";
 import type {Availability, DayInfo} from "../../types";
 import {fr} from "date-fns/locale";
 
@@ -64,23 +64,23 @@ const handleDayClick = (day: string, date: Date) => {
     showAddAvailability.value = true;
 };;
 
-function formatDate(date: string) {
-    const timestamp: number = Date.parse(date);
-    return format(new Date(timestamp), 'PPP', {locale: fr})
+function formatDate(date: Date) {
+    // const timestamp: number = Date.parse(date);
+    return format(new Date(date), 'PPP', {locale: fr})
 }
 
-function getSlotsByDate(date) {
+function getSlotsByDate(date: string) {
     const found = props.weekAvailability.find(item => item.date === date);
     const foundAppointment = props.weekAppointment.find(item => item.date === date);
     if (found) {
         newAvailability.value.slots = found.slots;
     }
     if (foundAppointment) {
-        appointmentHours.value = foundAppointment.hour;
+        appointmentHours.value = foundAppointment.slots;
     }
 }
 
-function reWriteDate(date) {
+function reWriteDate(date: Date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois commencent à 0, donc on ajoute 1
     const day = String(date.getDate()).padStart(2, '0'); // On ajoute un 0 devant si nécessaire
@@ -177,7 +177,7 @@ function reWriteDate(date) {
                     </div>
 
                     <button
-                        @click="setShowAddAvailability(false)"
+                        @click="showAddAvailability = false"
                         class="w-full py-2 bg-[#39b52d] hover:bg-[#299020] text-white rounded-lg transition-colors"
                     >
                         Confirmer
