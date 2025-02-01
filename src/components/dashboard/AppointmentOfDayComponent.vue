@@ -32,7 +32,6 @@ const onClickHandler = (page: number) => {
 
 <template>
     <div class="bg-white p-6 rounded-xl shadow-sm">
-        dsfdfdsf
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-lg font-semibold text-[#3c3f35]">Aujourd'hui</h2>
             <span class="text-[#39b52d] font-medium">6 rendez-vous</span>
@@ -59,8 +58,8 @@ const onClickHandler = (page: number) => {
             <vue-awesome-paginate
                 v-if="appointments && appointments.maxPage > 1"
                 v-model="currentPage"
-                :items-per-page="appointments.maxPage"
-                :max-pages-shown="5"
+                :items-per-page="appointments.pageSize"
+                :max-pages-shown="appointments.maxPage"
                 :total-items="appointments.total"
                 activePageClass="h-9 w-9 bg-[#f3f4f1] rounded-lg"
 

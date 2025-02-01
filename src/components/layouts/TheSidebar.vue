@@ -14,8 +14,8 @@ const menuItems = [
 
 const routes = [
     { to: '/dashboard', icon: CalendarIcon, text: 'Rendez-vous' },
-    { to: '/patients', icon: UsersIcon, text: 'Patients' },
-    { to: '/doctors', icon: UserGroupIcon, text: 'Médecins' },
+    // { to: '/patients', icon: UsersIcon, text: 'Patients' },
+    // { to: '/doctors', icon: UserGroupIcon, text: 'Médecins' },
 ]
 
 const sidebarClasses = computed(() => `

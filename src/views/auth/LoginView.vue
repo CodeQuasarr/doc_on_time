@@ -21,7 +21,6 @@ async function handleSubmit() {
             username: email.value,
             password: password.value
         })
-        console.log(user, token)
         authStore.setToken(token)
         authStore.setUser(user)
 

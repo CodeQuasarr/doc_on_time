@@ -53,3 +53,14 @@ export interface PaginatedAppointment {
     maxPage: number;
     pageSize: number;
 }
+
+export interface TimeSlot {
+    time: string;
+    day: string;
+}
+
+export interface DayInfo {
+    short: string;
+    full: string;
+    date: Date;
+}

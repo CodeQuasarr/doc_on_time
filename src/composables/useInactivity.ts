@@ -74,7 +74,6 @@ export function useInactivity(timeout: number = 1 * 60 * 1000, warningDuration: 
      * - Redirects the user to the "Home" route using the router.
      */
     const handleInactivity = () => {
-        console.log("Utilisateur déconnecté pour inactivité !");
         showWarning.value = false;
         localStorage.clear();
         router.push({ name: "home" });
@@ -126,5 +125,6 @@ export function useInactivity(timeout: number = 1 * 60 * 1000, warningDuration: 
 
     return {
         showWarning,
+        resetTimer
     };
 }

@@ -33,10 +33,25 @@ export const doctorService = {
      * @param {number} [currentPage=1] - The current page of the paginated results, defaults to 1.
      * @return {Promise<PaginatedAvailability>} A promise resolving to the paginated availabilities.
      */
-    async getDoctorAvailabilities(date: Date, currentPage: number = 1) {
+    async getDoctorAvailability(date: Date, currentPage: number = 1) {
         const { data } = await api.get<PaginatedAvailability>(`/next-two-days-availabilities`, {
             params: { date: date.toISOString(), page:  currentPage}
         })
+        return data
+    },
+
+    async getDoctorCurrentAndNextDayAvailability() {
+        const { data } = await api.get<PaginatedAvailability>(`/next-two-days-availabilities`)
+        return data
+    },
+
+    async getDoctorWeekAvailability() {
+        const { data } = await api.get<PaginatedAvailability>(`/availabilities/week`)
+        return data
+    },
+
+    async getDoctorWeekAppointment() {
+        const { data } = await api.get<PaginatedAvailability>(`/appointments/week`)
         return data
     },
 
@@ -75,7 +90,7 @@ export const doctorService = {
      * @param {number} [currentPage=1] - The page number for paginated appointment data. Defaults to 1.
      * @return {Promise<Object>} A promise resolving to the data object containing doctor appointments.
      */
-    async getDoctorAppointments(currentPage: number = 1) {
+    async getDoctorCurrentDayAppointments(currentPage: number = 1) {
         const date = new Date();
 
         // Extraire l'année, le mois et le jour
