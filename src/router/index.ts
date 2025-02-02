@@ -10,7 +10,7 @@ declare module "vue-router" {
     interface RouteMeta {
         requiresAuth?: boolean;
         requiresGuest?: boolean;
-        role?: string[]; // Définit `role` comme un tableau de chaînes
+        role?: string[];
     }
 }
 const routes = [

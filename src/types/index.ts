@@ -7,6 +7,11 @@ export interface User {
     roles: string[]
 }
 
+export interface LoginCredentials {
+    username: string
+    password: string
+}
+
 // Disponibilité
 export interface Appointment {
     id: string
