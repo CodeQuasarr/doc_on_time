@@ -34,13 +34,14 @@ const onClickHandler = (page: number) => {
     <div class="bg-white p-6 rounded-xl shadow-sm">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-lg font-semibold text-[#3c3f35]">Aujourd'hui</h2>
-            <span class="text-[#39b52d] font-medium">6 rendez-vous</span>
+            <span class="text-[#39b52d] font-medium">{{ appointments?.total ?? '0' }} rendez-vous</span>
         </div>
         <div class="space-y-6">
-            <div v-for="appointment in appointments?.data"
-                 v-if="appointments?.data?.length"
-                 :key="'appointment_' + appointment.id"
-                 class="flex items-center gap-4 p-3 rounded-lg hover:bg-[#f3f4f1] transition-colors"
+            <div
+                v-for="appointment in appointments?.data"
+                v-if="appointments?.data?.length"
+                :key="'appointment_' + appointment.id"
+                class="flex items-center gap-4 p-3 rounded-lg hover:bg-[#f3f4f1] transition-colors"
             >
                 <div class="flex-shrink-0 w-12 h-12 rounded-full bg-[#edfbea] flex items-center justify-center">
                     <ClockIcon class="w-6 h-6 text-[#299020]"/>

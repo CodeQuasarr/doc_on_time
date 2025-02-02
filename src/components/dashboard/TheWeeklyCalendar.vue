@@ -1,6 +1,11 @@
 <script setup lang="ts">
 
 import {format} from "date-fns";
+import {CalendarIcon, ClockIcon, PlusIcon, XMarkIcon} from "@heroicons/vue/24/outline";
+import {computed, type PropType, ref} from "vue";
+import type {Availability, DayInfo} from "../../types";
+import {fr} from "date-fns/locale";
+import {doctorService} from "../../services/doctor.service.ts";
 
 const props = defineProps({
     weekAvailability: {
@@ -13,11 +18,9 @@ const props = defineProps({
     }
 })
 
-import {CalendarIcon, ClockIcon, PlusIcon, XMarkIcon} from "@heroicons/vue/24/outline";
-import {computed, type PropType, ref} from "vue";
-import type {Availability, DayInfo} from "../../types";
-import {fr} from "date-fns/locale";
 
+const error = ref<string>('');
+const currentAvailabilityId = ref<number>(0);
 const showAddAvailability = ref(false);
 const selectedDay = ref('');
 const newAvailability = ref<Availability>({
@@ -73,6 +76,7 @@ function getSlotsByDate(date: string) {
     const found = props.weekAvailability.find(item => item.date === date);
     const foundAppointment = props.weekAppointment.find(item => item.date === date);
     if (found) {
+        currentAvailabilityId.value = found.id ?? 0;
         newAvailability.value.slots = found.slots;
     }
     if (foundAppointment) {
@@ -86,6 +90,31 @@ function reWriteDate(date: Date) {
     const day = String(date.getDate()).padStart(2, '0'); // On ajoute un 0 devant si nécessaire
     return `${year}-${month}-${day}`;
 }
+
+async function save() {
+    try {
+        if (!newAvailability.value.slots.length) {
+            error.value = 'Veuillez sélectionner au moins un créneau'
+            return
+        }
+        if (!newAvailability.value.date) {
+            error.value = 'Veuillez sélectionner une date'
+            return
+        }
+
+        newAvailability.value.date = reWriteDate(new Date(selectedDay.value));
+        if (currentAvailabilityId.value) {
+            await doctorService.updateAvailabilities(newAvailability.value, currentAvailabilityId.value)
+        } else {
+            await doctorService.createAvailabilities(newAvailability.value)
+        }
+        showAddAvailability.value = false
+
+    } catch (e) {
+        error.value = 'Erreur lors de l\'ajout des disponibilités'
+    }
+}
+
 
 
 </script>
@@ -177,7 +206,7 @@ function reWriteDate(date: Date) {
                     </div>
 
                     <button
-                        @click="showAddAvailability = false"
+                        @click="save()"
                         class="w-full py-2 bg-[#39b52d] hover:bg-[#299020] text-white rounded-lg transition-colors"
                     >
                         Confirmer

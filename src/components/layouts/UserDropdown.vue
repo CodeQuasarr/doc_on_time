@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import {onBeforeUnmount, onMounted, ref} from 'vue';
+import {useAuthStore} from "../../stores/auth.ts";
 
 const isOpen = ref<boolean>(false);
 const userDropdownRef = ref<HTMLElement | null>(null);
@@ -7,12 +8,7 @@ const userDropdownRef = ref<HTMLElement | null>(null);
 const setIsOpen = (value: boolean) => {
     isOpen.value = value;
 };
-
-const user = {
-    name: 'John Smith',
-    role: 'Pharmacien(ne)',
-    avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&q=80&w=32&h=32'
-};
+const authStore = useAuthStore()
 
 const handleClickOutside = (event: MouseEvent) => {
     if (userDropdownRef.value && !userDropdownRef.value.contains(event.target as Node)) {
@@ -37,10 +33,10 @@ onBeforeUnmount(() => {
             <img
                 src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=100"
                 alt="User avatar"
-                className="w-10 h-10 rounded-full object-cover"
+                class="w-10 h-10 rounded-full object-cover"
             />
             <div>
-                <p class="font-medium text-[#3c3f35]">Dr. Sophie Martin</p>
+                <p class="font-medium text-[#3c3f35]">{{ authStore.user?.first_name + ' ' + authStore.user?.last_name }}</p>
                 <p class="text-sm text-[#929982]">Médecin généraliste</p>
             </div>
             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -50,11 +46,6 @@ onBeforeUnmount(() => {
 
         <div v-if="isOpen"
              class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-            <div class="px-4 py-3 border-b border-gray-200">
-                <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
-                <p class="text-xs text-gray-500">{{ user.role }}</p>
-            </div>
-
             <div class="py-1">
                 <button class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center">
                     <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">

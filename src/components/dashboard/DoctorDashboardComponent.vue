@@ -80,9 +80,6 @@ onMounted(async () => {
                 @next-appointment="loadCurrentDayAppointments($event)"
             />
             <!-- Gérer mes disponibilités -->
-            <pre>
-                {{weekAppointment}}
-            </pre>
             <TheWeeklyCalendar
                 v-if="weekAvailability"
                 :week-availability="weekAvailability"
@@ -93,7 +90,6 @@ onMounted(async () => {
         <!-- droite -->
         <div class="space-y-6">
             <!-- Disponibilités actuelles -->
-            <pre>{{currentAndNextDayAvailability}}</pre>
             <TheAvailabilityList
                 :availabilities="currentAndNextDayAvailability"
                 :appointment-hours="currentDayAppointmentHours"

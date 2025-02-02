@@ -3,6 +3,7 @@
 import {XMarkIcon} from "@heroicons/vue/24/outline";
 import type {Availability} from "../../types";
 import type {PropType} from "vue";
+import {doctorService} from "../../services/doctor.service.ts";
 
 
 const props = defineProps({
@@ -17,13 +18,25 @@ const props = defineProps({
     }
 });
 
-const handleDeleteSlot = (time: string, day: 'today' | 'tomorrow') => {
+const handleDeleteSlot = async (time: string, day: 'today' | 'tomorrow') => {
     if (props.availabilities && props.availabilities[0]) {
+        const availabilities: Availability = {
+            date: '',
+            slots: []
+        };
+        let currentId = 0
         if (day === 'today') {
             props.availabilities[0].slots = props.availabilities[0].slots.filter(slot => slot !== time);
+            availabilities.date = props.availabilities[0].date;
+            availabilities.slots = props.availabilities[0].slots;
+            currentId = props.availabilities[0].id!;
         } else {
             props.availabilities[1].slots = props.availabilities[1].slots.filter(slot => slot !== time);
+            availabilities.date = props.availabilities[1].date;
+            availabilities.slots = props.availabilities[1].slots;
+            currentId = props.availabilities[1].id!;
         }
+        await doctorService.updateAvailabilities(availabilities, currentId);
     }
 
 };
@@ -33,9 +46,6 @@ const handleDeleteSlot = (time: string, day: 'today' | 'tomorrow') => {
 
 <template>
     <div class="bg-white p-6 rounded-xl shadow-sm">
-        <pre>
-            {{ props.availabilities }}
-        </pre>
         <h2 class="text+9-lg font-semibold text-[#3c3f35] mb-6">Disponibilités actuelles</h2>
         <div class="space-y-4">
             <div class="p-3 rounded-lg bg-[#edfbea]">
@@ -61,7 +71,7 @@ const handleDeleteSlot = (time: string, day: 'today' | 'tomorrow') => {
                         </div>
                         <div v-else class="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                             <button
-                                @click="handleDeleteSlot(slot, 'tomorrow')"
+                                @click="handleDeleteSlot(slot, 'today')"
                                 class="p-1 rounded bg-[#f3f4f1] text-[#474c3f] hover:bg-[#e6e7e0]"
                             >
                                 <XMarkIcon class="w-3 h-3" />
@@ -92,7 +102,7 @@ const handleDeleteSlot = (time: string, day: 'today' | 'tomorrow') => {
                         </button>
                         <div class="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                             <button
-                                @click="handleDeleteSlot(slot, 'today')"
+                                @click="handleDeleteSlot(slot, 'tomorrow')"
                                 class="p-1 rounded bg-[#f3f4f1] text-[#474c3f] hover:bg-[#e6e7e0]"
                             >
                                 <XMarkIcon class="w-3 h-3" />
