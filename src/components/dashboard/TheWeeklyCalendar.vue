@@ -18,6 +18,7 @@ const props = defineProps({
     }
 })
 
+const emit = defineEmits(['availabilityWasUpdated'])
 
 const error = ref<string>('');
 const currentAvailabilityId = ref<number>(0);
@@ -62,36 +63,38 @@ const days = computed(() => {
 // Gérer le clic sur un jour
 const handleDayClick = (day: string, date: Date) => {
     const checkDate = reWriteDate(date);
+    newAvailability.value.date = checkDate;
     getSlotsByDate(checkDate);
     selectedDay.value = `${day} ${formatDate(date)}`;
     showAddAvailability.value = true;
-};;
+};
 
-function formatDate(date: Date) {
+const formatDate = (date: Date) => {
     // const timestamp: number = Date.parse(date);
     return format(new Date(date), 'PPP', {locale: fr})
 }
 
-function getSlotsByDate(date: string) {
+const getSlotsByDate = (date: string) => {
     const found = props.weekAvailability.find(item => item.date === date);
     const foundAppointment = props.weekAppointment.find(item => item.date === date);
     if (found) {
         currentAvailabilityId.value = found.id ?? 0;
         newAvailability.value.slots = found.slots;
+        appointmentHours.value = [];
     }
     if (foundAppointment) {
         appointmentHours.value = foundAppointment.slots;
     }
 }
 
-function reWriteDate(date: Date) {
+const reWriteDate = (date: Date) => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois commencent à 0, donc on ajoute 1
-    const day = String(date.getDate()).padStart(2, '0'); // On ajoute un 0 devant si nécessaire
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
 
-async function save() {
+const save = async () => {
     try {
         if (!newAvailability.value.slots.length) {
             error.value = 'Veuillez sélectionner au moins un créneau'
@@ -102,13 +105,13 @@ async function save() {
             return
         }
 
-        newAvailability.value.date = reWriteDate(new Date(selectedDay.value));
         if (currentAvailabilityId.value) {
             await doctorService.updateAvailabilities(newAvailability.value, currentAvailabilityId.value)
         } else {
             await doctorService.createAvailabilities(newAvailability.value)
         }
         showAddAvailability.value = false
+        emit('availabilityWasUpdated', newAvailability.value)
 
     } catch (e) {
         error.value = 'Erreur lors de l\'ajout des disponibilités'

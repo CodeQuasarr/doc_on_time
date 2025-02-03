@@ -7,65 +7,82 @@ import AppointmentOfDayComponent from "./AppointmentOfDayComponent.vue";
 import TheAvailabilityList from "./TheAvailabilityList.vue";
 import TheQuickActions from "./TheQuickActions.vue";
 import TheWeeklyCalendar from "./TheWeeklyCalendar.vue";
+import {handleApiCall} from "../../utils/apiHandler.ts";
 
 const error = ref('')
 
 // Rendez-vous du jour
 const currentDayAppointments = ref<PaginatedAppointment|null>(null)
 const currentDayAppointmentHours = ref<string[]>([])
-
-// Disponibilités actuelles
 const currentAndNextDayAvailability = ref<Schedule[]|null>(null)
 const weekAvailability = ref<Schedule[]|null>(null)
 const weekAppointment = ref<Schedule[]|null>(null)
 
 
 const loadCurrentDayAppointments = async (page: number = 1) => {
-    try {
-        currentDayAppointments.value = await doctorService.getDoctorCurrentDayAppointments(page)
-        if (currentDayAppointments.value?.data) {
-            currentDayAppointmentHours.value = await doctorService.getTodayDoctorAppointmentsHourly()
-        }
-    } catch (e) {
-        error.value = 'Erreur lors du chargement des rendez-vous'
-    }
+    await handleApiCall(
+        async () => {
+            currentDayAppointments.value = await doctorService.getDoctorCurrentDayAppointments(page);
+            if (currentDayAppointments.value?.data) {
+                currentDayAppointmentHours.value = await doctorService.getTodayDoctorAppointmentsHourly();
+            }
+        },
+        error,
+        "Erreur lors du chargement des rendez-vous"
+    );
 }
 
-async function loadCurrentAndNextDayAvailability() {
-    try {
-        currentAndNextDayAvailability.value = await doctorService.getDoctorCurrentAndNextDayAvailability()
-    } catch (e) {
-        error.value = 'Erreur lors du chargement des disponibilités'
-    }
+const loadCurrentAndNextDayAvailability = async () => {
+    await handleApiCall(
+        async () => {
+            currentAndNextDayAvailability.value = await doctorService.getDoctorCurrentAndNextDayAvailability();
+        },
+        error,
+        "Erreur lors du chargement des disponibilités"
+    );
 }
 
-async function loadWeekAvailability() {
-    try {
-        weekAvailability.value! = await doctorService.getDoctorWeekAvailability()
-    } catch (e) {
-        error.value = 'Erreur lors du chargement des disponibilités'
-    }
+const loadWeekAvailability = async () => {
+    await handleApiCall(
+        async () => {
+            weekAvailability.value = await doctorService.getDoctorWeekAvailability();
+        },
+        error,
+        "Erreur lors du chargement des disponibilités"
+    );
 }
 
-async function loadWeekAppointment() {
-    try {
-        weekAppointment.value = await doctorService.getDoctorWeekAppointment()
-    } catch (e) {
-        error.value = 'Erreur lors du chargement des disponibilités'
+const loadWeekAppointment = async () => {
+    await handleApiCall(
+        async () => {
+            weekAppointment.value = await doctorService.getDoctorWeekAppointment();
+        },
+        error,
+        "Erreur lors du chargement des disponibilités"
+    );
+}
+
+const availabilityWasUpdated = (newAvailability: Schedule) => {
+    if (newAvailability.date === currentAndNextDayAvailability.value![0].date) {
+        currentAndNextDayAvailability.value![0].slots = newAvailability.slots
+    } else {
+        currentAndNextDayAvailability.value![1].slots = newAvailability.slots
     }
 }
 
 onMounted(async () => {
-    try {
-        await Promise.all([
-            loadCurrentDayAppointments(),
-            loadCurrentAndNextDayAvailability(),
-            loadWeekAvailability(),
-            loadWeekAppointment()
-        ]);
-    } catch (e) {
-        error.value = "Erreur lors du chargement des données";
-    }
+    await handleApiCall(
+        async () => {
+            await Promise.all([
+                loadCurrentDayAppointments(),
+                loadCurrentAndNextDayAvailability(),
+                loadWeekAvailability(),
+                loadWeekAppointment()
+            ]);
+        },
+        error,
+        "Erreur lors du chargement des données"
+    );
 })
 </script>
 
@@ -84,6 +101,7 @@ onMounted(async () => {
                 v-if="weekAvailability"
                 :week-availability="weekAvailability"
                 :week-appointment="weekAppointment || []"
+                @availability-was-updated="availabilityWasUpdated($event)"
             />
         </div>
 
