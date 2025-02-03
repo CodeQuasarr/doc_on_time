@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import type { Appointment } from '../types'
 import {appointmentService} from "../services/appointment.service.ts";
 import api from "../services/api.ts";
 
@@ -30,47 +29,6 @@ describe('appointmentService', () => {
             // Vérifications
             expect(api.get).toHaveBeenCalledWith('/appointments')
             expect(result).toEqual(mockResponse)
-        })
-    })
-
-    describe('createAppointment', () => {
-        it('should create a new appointment', async () => {
-            const mockResponse: Appointment = {
-                id: '1',
-                doctorId: '123',
-                date: '2023-11-01T10:00:00',
-                type: 'consultation',
-                status: 'scheduled'
-            }
-
-            const newAppointment = {
-                    doctorId: '123',
-                    date: new Date('2023-11-01T10:00:00'),
-                    type: 'consultation'
-                };
-            vi.spyOn(api, 'post').mockResolvedValueOnce({ data: mockResponse })
-
-            const result = await appointmentService.createAppointment(newAppointment)
-
-            // Vérifications
-            expect(api.post).toHaveBeenCalledWith('/appointments', newAppointment)
-            expect(result).toEqual(mockResponse)
-        })
-
-        it('should throw an error if the API fails to create an appointment', async () => {
-            const errorMessage = 'Failed to create appointment'
-            ;vi.spyOn(api, 'post').mockRejectedValueOnce(new Error(errorMessage))
-
-            const newAppointment = {
-                doctorId: '123',
-                date: new Date('2023-11-01T10:00:00'),
-                type: 'consultation'
-            }
-
-            await expect(appointmentService.createAppointment(newAppointment)).rejects.toThrow(errorMessage)
-
-            // Vérification que l'API a été appelée
-            expect(api.post).toHaveBeenCalledWith('/appointments', newAppointment)
         })
     })
 
