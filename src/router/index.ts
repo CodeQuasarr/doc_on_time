@@ -3,7 +3,6 @@ import {createRouter, createWebHistory} from "vue-router";
 import LoginView from "../views/auth/LoginView.vue";
 import RegisterView from "../views/auth/RegisterView.vue";
 import Dashboard from "../views/Dashboard.vue";
-import AppointmentBooking from "../views/AppointmentBooking.vue";
 import DoctorAvailabilities from "../views/DoctorAvailabilities.vue";
 import "vue-router";
 import Error404 from "../../Error404.vue";

@@ -2,13 +2,14 @@
 import {onMounted, ref} from 'vue'
 import {doctorService} from '../services/doctor.service'
 import type {Availability, Schedule} from '../types'
-import VueDatePicker from '@vuepic/vue-datepicker'
 import {addDays, format, isSameDay, parseISO, startOfWeek} from 'date-fns'
 import {fr} from 'date-fns/locale'
 import AuthTemplate from "../layouts/AuthTemplate.vue";
 import {BellAlertIcon} from "@heroicons/vue/24/outline";
 import {handleApiCall} from "../utils/apiHandler.ts";
 import {reWriteDate} from "../utils/formateDate.ts";
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 
 const availabilities = ref<Availability[]>([])
 const selectedWeek = ref(new Date())
@@ -37,7 +38,7 @@ onMounted(async () => {
 async function loadAvailabilities() {
     try {
         loading.value = true
-        let currentDate = new Date()
+        let currentDate = new Date().toString()
         if (Array.isArray(selectedWeek.value)) {
             currentDate = selectedWeek.value[0]
         }
@@ -85,7 +86,7 @@ async function toggleSlot(date: Date, slot: string) {
         // Créer une nouvelle disponibilité
         updatedAvailabilities = [
             ...availabilities.value,
-            { date: new Date(dateStr), slots: [slot] }
+            { date: new Date(dateStr).toString(), slots: [slot] }
         ]
     }
 
@@ -93,7 +94,9 @@ async function toggleSlot(date: Date, slot: string) {
         if (availability?.id) {
             await doctorService.updateAvailabilities(availability, availability.id)
         } else {
-            await doctorService.createAvailabilities(availability)
+            if (availability && availability.slots.length > 0) {
+                await doctorService.createAvailabilities(availability)
+            }
         }
         availabilities.value = updatedAvailabilities
     } catch (e) {

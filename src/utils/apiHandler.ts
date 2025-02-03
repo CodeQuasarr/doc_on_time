@@ -15,7 +15,6 @@ export const handleApiCall = async (
     try {
         await operation();
     } catch (e) {
-        console.log(e);
-        error.value = 'errorMessage';
+        error.value = errorMessage;
     }
 };

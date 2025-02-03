@@ -5,10 +5,8 @@ import type {PaginatedAppointment, Schedule} from "../../types";
 import {doctorService} from "../../services/doctor.service.ts";
 import AppointmentOfDayComponent from "./AppointmentOfDayComponent.vue";
 import TheAvailabilityList from "./TheAvailabilityList.vue";
-import TheQuickActions from "./TheQuickActions.vue";
 import TheWeeklyCalendar from "./TheWeeklyCalendar.vue";
 import {handleApiCall} from "../../utils/apiHandler.ts";
-import {reWriteDate} from "../../utils/formateDate.ts";
 
 const error = ref('')
 
@@ -46,7 +44,7 @@ const loadCurrentAndNextDayAvailability = async () => {
 const loadWeekAvailability = async () => {
     await handleApiCall(
         async () => {
-            weekAvailability.value = await doctorService.getDoctorWeekAvailability(new Date());
+            weekAvailability.value = await doctorService.getDoctorWeekAvailability(new Date().toString());
         },
         error,
         "Erreur lors du chargement des disponibilités"

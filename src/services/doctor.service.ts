@@ -1,5 +1,5 @@
 import api from './api'
-import type {Doctor, Availability, PaginatedAvailability, Schedule} from '../types'
+import type {Doctor, Availability, Schedule} from '../types'
 import {reWriteDate} from "../utils/formateDate.ts";
 
 /**:
@@ -24,15 +24,15 @@ export const doctorService = {
 
 
     /**
-     * Fetches the availabilities of doctors for the next two days starting from the provided date.
+     * Fetches the availability details for doctors based on the provided date and page number.
      *
-     * @param {Date} date - The start date from which to fetch doctor's availabilities.
-     * @param {number} [currentPage=1] - The current page of the paginated results, defaults to 1.
-     * @return {Promise<PaginatedAvailability>} A promise resolving to the paginated availabilities.
+     * @param {string} date - The date for which to fetch the doctor availabilities.
+     * @param {number} [currentPage=1] - The current page number for paginated results (default is 1).
+     * @return {Promise<Schedule[]>} A promise that resolves with an array of doctor availabilities.
      */
     async getDoctorAvailabilities(date: string, currentPage: number = 1) {
         const { data } = await api.get<Schedule[]>(`/availabilities/week`, {
-            params: { date: date.toISOString(), page:  currentPage}
+            params: { date: date, page:  currentPage}
         })
         return data
     },
@@ -59,7 +59,7 @@ export const doctorService = {
      */
     async getDoctorWeekAvailability(date: string = '') {
         const { data } = await api.get<Schedule[]>(`/availabilities/week`, {
-            params: { date: reWriteDate(date) }
+            params: { date: reWriteDate(new Date(date)) }
         })
         return data
     },
