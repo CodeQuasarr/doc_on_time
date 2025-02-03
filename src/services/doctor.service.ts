@@ -1,11 +1,12 @@
 import api from './api'
 import type {Doctor, Availability, PaginatedAvailability, Schedule} from '../types'
+import {reWriteDate} from "../utils/formateDate.ts";
 
 /**:
  * An object that provides services for fetching and managing doctor-related data from the API.
  *
  * @property {Function} getAllDoctors - Retrieves a list of doctors optionally filtered by speciality or location.
- * @property {Function} getDoctorAvailability - Fetches the availabilities of doctors for the next two days starting from a given date.
+ * @property {Function} getDoctorAvailabilities - Fetches the availabilities of doctors for the next two days starting from a given date.
  * @property {Function} getDoctorCurrentAndNextDayAvailability - Fetches the current and next day's availability of doctors.
  * @property {Function} getDoctorWeekAvailability - Fetches the weekly availability of doctors.
  * @property {Function} getDoctorWeekAppointment - Fetches the doctor's appointments for the current week.
@@ -29,8 +30,8 @@ export const doctorService = {
      * @param {number} [currentPage=1] - The current page of the paginated results, defaults to 1.
      * @return {Promise<PaginatedAvailability>} A promise resolving to the paginated availabilities.
      */
-    async getDoctorAvailability(date: Date, currentPage: number = 1) {
-        const { data } = await api.get<PaginatedAvailability>(`/next-two-days-availabilities`, {
+    async getDoctorAvailabilities(date: string, currentPage: number = 1) {
+        const { data } = await api.get<Schedule[]>(`/availabilities/week`, {
             params: { date: date.toISOString(), page:  currentPage}
         })
         return data
@@ -56,8 +57,10 @@ export const doctorService = {
      *
      * @return {Promise<Schedule[]>} A promise that resolves to an array of Schedule objects representing the doctor's weekly availability.
      */
-    async getDoctorWeekAvailability() {
-        const { data } = await api.get<Schedule[]>(`/availabilities/week`)
+    async getDoctorWeekAvailability(date: string = '') {
+        const { data } = await api.get<Schedule[]>(`/availabilities/week`, {
+            params: { date: reWriteDate(date) }
+        })
         return data
     },
 

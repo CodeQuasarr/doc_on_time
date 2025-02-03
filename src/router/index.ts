@@ -4,7 +4,9 @@ import LoginView from "../views/auth/LoginView.vue";
 import RegisterView from "../views/auth/RegisterView.vue";
 import Dashboard from "../views/Dashboard.vue";
 import AppointmentBooking from "../views/AppointmentBooking.vue";
+import DoctorAvailabilities from "../views/DoctorAvailabilities.vue";
 import "vue-router";
+import Error404 from "../../Error404.vue";
 
 declare module "vue-router" {
     interface RouteMeta {
@@ -19,8 +21,9 @@ const routes = [
     { path: '/register', name: 'register', component: RegisterView, meta: { requiresGuest: true } },
     { path: '/dashboard', name: 'dashboard', component: Dashboard, meta: { requiresAuth: true, role: ['ROLE_PATIENT', 'ROLE_DOCTOR'] }},
     {
-        path: '/booking', name: 'booking', component: AppointmentBooking, meta: { requiresAuth: true, role: ['ROLE_PATIENT'] }
-    }
+        path: '/doctor/availabilities', name: 'doctor-availabilities', component: DoctorAvailabilities, meta: { requiresAuth: true, role: ['ROLE_DOCTOR'] }
+    },
+    { path: "/:pathMatch(.*)*", name: "Error404", component: Error404 },
 ];
 
 const router = createRouter({

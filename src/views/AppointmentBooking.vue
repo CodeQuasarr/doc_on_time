@@ -105,7 +105,7 @@ loadDoctors()
                             type="text"
                             id="speciality"
                             v-model="specialityFilter"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="Rechercher une spécialité"
                         />
                     </div>
@@ -115,7 +115,7 @@ loadDoctors()
                             type="text"
                             id="location"
                             v-model="locationFilter"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="Rechercher une ville"
                         />
                     </div>
@@ -134,8 +134,8 @@ loadDoctors()
                     <div
                         v-for="doctor in filteredDoctors"
                         :key="doctor.id"
-                        class="border rounded-lg p-4 cursor-pointer hover:border-primary-500"
-                        :class="{ 'border-primary-500': selectedDoctor?.id === doctor.id }"
+                        class="border rounded-lg p-4 cursor-pointer hover:border-indigo-500"
+                        :class="{ 'border-indigo-500': selectedDoctor?.id === doctor.id }"
                         @click="handleDoctorSelect(doctor)"
                     >
                         <h3 class="font-semibold">Dr. {{ doctor.last_name }}</h3>
@@ -164,7 +164,7 @@ loadDoctors()
                                 @click="selectedSlot = slot"
                                 class="px-4 py-2 text-sm rounded-md"
                                 :class="{
-                  'bg-primary-600 text-white': selectedSlot === slot,
+                  'bg-indigo-600 text-white': selectedSlot === slot,
                   'bg-gray-100 hover:bg-gray-200': selectedSlot !== slot
                 }"
                             >
@@ -177,7 +177,7 @@ loadDoctors()
                         v-if="selectedSlot"
                         @click="handleBooking"
                         :disabled="loading"
-                        class="mt-6 w-full bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 disabled:opacity-50"
+                        class="mt-6 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:opacity-50"
                     >
                         {{ loading ? 'Confirmation en cours...' : 'Confirmer le rendez-vous' }}
                     </button>

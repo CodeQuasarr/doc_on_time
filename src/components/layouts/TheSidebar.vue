@@ -10,6 +10,7 @@ const emit = defineEmits(['update:isOpen']);
 
 const routes = [
     { to: '/dashboard', icon: CalendarIcon, text: 'Rendez-vous' },
+    { to: '/doctor/availabilities', icon: CalendarIcon, text: 'Toute mes disponibilités' },
     // { to: '/patients', icon: UsersIcon, text: 'Patients' },
     // { to: '/doctors', icon: UserGroupIcon, text: 'Médecins' },
 ]
