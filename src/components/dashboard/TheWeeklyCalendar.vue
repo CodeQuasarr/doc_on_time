@@ -23,7 +23,6 @@ const props = defineProps({
 // Emits
 const emit = defineEmits(["availabilityWasUpdated"]);
 
-console.log(typeof props.weekAvailability);
 const {
     days, showAddAvailability, selectedDay, appointmentHours,
     newAvailability, toggleAddAvailability, handleDayClick, save

@@ -1,10 +1,10 @@
-import { computed, ref, type PropType, defineProps, defineEmits  } from "vue";
+import { computed, ref  } from "vue";
 import type {Availability} from "../types";
 import {formatDateToDateFns, yyy_mm_dd_Format} from "../utils/formateDate.ts";
 import {doctorService} from "../services/doctor.service.ts";
 import {useToast} from "vue-toastification";
 
-export function useWeeklyCalendar(weekAvailability: Availability[], weekAppointment: Availability[], emit: typeof defineEmits) {
+export function useWeeklyCalendar(weekAvailability: Availability[], weekAppointment: Availability[], emit: Function) {
 
 
 
