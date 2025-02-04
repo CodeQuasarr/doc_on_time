@@ -97,7 +97,7 @@ onMounted(async () => {
             />
             <!-- Gérer mes disponibilités -->
             <TheWeeklyCalendar
-                v-if="weekAvailability"
+                v-if="weekAvailability && weekAppointment"
                 :week-availability="weekAvailability"
                 :week-appointment="weekAppointment || []"
                 @availability-was-updated="availabilityWasUpdated($event)"

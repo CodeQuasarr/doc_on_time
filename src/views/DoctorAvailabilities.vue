@@ -7,7 +7,7 @@ import {fr} from 'date-fns/locale'
 import AuthTemplate from "../layouts/AuthTemplate.vue";
 import {BellAlertIcon} from "@heroicons/vue/24/outline";
 import {handleApiCall} from "../utils/apiHandler.ts";
-import {reWriteDate} from "../utils/formateDate.ts";
+import {yyy_mm_dd_Format} from "../utils/formateDate.ts";
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
@@ -175,7 +175,7 @@ const loadWeekAppointment = async () => {
                             <span v-else>-</span>
                         </button>
                         <div
-                            v-if="weekAppointment && weekAppointment[index] && weekAppointment[index].date === reWriteDate(day) && weekAppointment[index].slots.includes(slot)"
+                            v-if="weekAppointment && weekAppointment[index] && weekAppointment[index].date === yyy_mm_dd_Format(day) && weekAppointment[index].slots.includes(slot)"
                             class="font-bold bg-[#d7f6d1]/60 absolute right-0 top-0 border border-white w-full h-full flex items-center justify-center gap-1">
                             <BellAlertIcon class="w-8 h-8 text-green-500" />
                             Rendez-vous

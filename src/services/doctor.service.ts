@@ -1,6 +1,6 @@
 import api from './api'
 import type {Doctor, Availability, Schedule} from '../types'
-import {reWriteDate} from "../utils/formateDate.ts";
+import {yyy_mm_dd_Format} from "../utils/formateDate.ts";
 
 /**:
  * An object that provides services for fetching and managing doctor-related data from the API.
@@ -59,7 +59,7 @@ export const doctorService = {
      */
     async getDoctorWeekAvailability(date: string = '') {
         const { data } = await api.get<Schedule[]>(`/availabilities/week`, {
-            params: { date: reWriteDate(new Date(date)) }
+            params: { date: yyy_mm_dd_Format(new Date(date)) }
         })
         return data
     },
